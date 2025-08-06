@@ -1,0 +1,73 @@
+[33m9807355[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m sus
+[33md151205[m base_names
+[33mb24869a[m Merge pull request #90 from Rishappreet-Singh/fix-s3-acl
+[33m614e12f[m Fix changes for acl s3 error
+[33m4a03507[m Merge pull request #85 from Rishappreet-Singh/db-version-update
+[33mfa56c5f[m Merge pull request #83 from Rishappreet-Singh/master
+[33m8250e6f[m Update(Module-2): Change the mysql version 5.7 to 8.0
+[33m0b82621[m Update checkout version to address Node 16 deprecation
+[33m7db79bb[m Update Launch Configuration to Launch Template
+[33m6037dd8[m Update terraform version and use github env instead of set-output
+[33m8e2b422[m Update terraform version and use github env instead of set-output
+[33m9c5bb23[m Merge pull request #80 from mahhesshh/master
+[33m199b9fc[m tf-destroy-main.yml
+[33m67f233f[m tf-apply-main.yml
+[33m0e527e0[m tf-apply-main.yml
+[33m77a3957[m Merge pull request #70 from jesayafn/dev/deprecated-resources
+[33m9fab77c[m Merge pull request #68 from za/fix-excessive-policy
+[33mf169a4c[m Update policy.json to fix ERROR while deploying module 2
+[33mfce5eef[m Delete commented resources
+[33m5869997[m Change deprecated resources - Replace aws_s3_bucket_object to aws_s3_object
+[33me5c6083[m Fix the iam:PassRole security alert
+[33m9ffc458[m Remove actions that triggered security alert and warning
+[33m0009948[m Merge pull request #60 from Rishappreet-Singh/master
+[33m39b4d86[m Add minimum policy readme change
+[33m39493e6[m Create policy.json
+[33m3529f87[m Merge pull request #58 from SSKale1/master
+[33m44b283d[m Switch RDS DB instance class from t2 to t3.
+[33m74839ac[m Merge pull request #54 from SSKale1/master
+[33m08671e1[m Upgrade nodeJs runtime to 18.x and aws provider to 5.24.0
+[33mde8c1b3[m Merge pull request #40 from motikan2010/master-patch-1
+[33mbcb1eb2[m Merge pull request #38 from LiteshGhute/master
+[33me2c8fdd[m fix typo
+[33m5eac83d[m Updated "Presented at" List
+[33mac00c7a[m Merge pull request #36 from SomeKirill/patch-1
+[33m63039aa[m Merge pull request #32 from BinayakBanerjee/patch-1
+[33m5161dd4[m Merge pull request #35 from LiteshGhute/master
+[33m4c51f08[m Merge pull request #37 from SSKale1/master
+[33m73c3dda[m ACL Fixes required after AWS S3 APR 2023 changes
+[33m1cc7515[m Fix AdministratorAccess ARN
+[33mec877cf[m Updated the designation in Contributors list
+[33mbda719a[m Fixed a typo
+[33m76567df[m Merge pull request #31 from za/format-terraform-file
+[33md1e0e6e[m Format terraform main.tf file
+[33m1763652[m Merge pull request #28 from SSKale1/master
+[33me87a718[m Fix Typo
+[33m27254a5[m Merge pull request #27 from SSKale1/master
+[33m3f720b8[m Merge pull request #25 from zbraiterman/update-readme
+[33m6dd0279[m Release defensive manuals
+[33m1354122[m Release Module 2, Manual 04
+[33ma76461f[m Grammar fix in mention of IDOR
+[33m7b6b65a[m Update README.md
+[33mfea3d02[m Update README.md
+[33m66973d8[m Update README.md
+[33m20306c2[m Update README.md
+[33m6670072[m Merge pull request #19 from SSKale1/master
+[33m7b75de1[m Release Module 2 Manuals, Bug Fixes
+[33m268aa1b[m Merge pull request #17 from SSKale1/master
+[33me546050[m Release AWSGoat Module 2
+[33mf01733d[m Updated Discord Link
+[33m750672a[m Merge pull request #13 from SSKale1/master
+[33m6138a9a[m Fixed inconsistencies in solution manuals
+[33m57f7385[m Merge pull request #12 from SSKale1/master
+[33mfbf170c[m Bug Fixes and Handling Repeated Deployment
+[33mbdf1e80[m Added Discord Server Link
+[33m8d18e66[m Merge pull request #6 from lpmi-13/patch-1
+[33m57b4f8f[m Use https on link
+[33m337c087[m Updated README.md
+[33m1be5de8[m Added AzureGoat URL
+[33mc5686e9[m Added slides and solution manuals
+[33mf8dd840[m Merge pull request #3 from SSKale1/master
+[33me55fd30[m Refactor
+[33mb02698f[m Updated README.md
+[33mdde7b6b[m Initial Commit

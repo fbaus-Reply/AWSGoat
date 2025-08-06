@@ -7,7 +7,7 @@ terraform {
   }
 }
 provider "aws" {
-  region = "eu-west-3"
+  region = "us-east-1"
 }
 
 data "aws_caller_identity" "current" {}
@@ -27,6 +27,9 @@ resource "aws_lambda_function" "react_lambda_app" {
   runtime       = "nodejs18.x"
   role          = aws_iam_role.blog_app_lambda.arn
   depends_on    = [data.archive_file.lambda_zip, null_resource.file_replacement_lambda_react]
+  tags = {
+    goat = "true"
+  }
 }
 
 
@@ -50,6 +53,9 @@ resource "aws_iam_role" "blog_app_lambda" {
   ]
 }
 EOF
+  tags = {
+    goat = "true"
+  }
 }
 
 
@@ -70,6 +76,9 @@ resource "aws_api_gateway_rest_api" "api" {
       "REGIONAL"
     ]
   }
+    tags = {
+    goat = "true"
+  }
 }
 
 
@@ -77,6 +86,7 @@ resource "aws_api_gateway_resource" "endpoint" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
   path_part   = "react"
+
 }
 
 resource "aws_api_gateway_method" "endpoint" {
@@ -84,6 +94,7 @@ resource "aws_api_gateway_method" "endpoint" {
   resource_id   = aws_api_gateway_resource.endpoint.id
   http_method   = "GET"
   authorization = "NONE"
+  
 }
 
 resource "aws_api_gateway_method_response" "endpoint" {
@@ -120,6 +131,7 @@ resource "aws_api_gateway_integration" "endpoint" {
       }
     )
   }
+  
 }
 
 resource "aws_api_gateway_integration_response" "endpoint" {
@@ -146,6 +158,7 @@ resource "aws_lambda_permission" "apigw_ba" {
   function_name = aws_lambda_function.react_lambda_app.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
+  
 }
 
 
@@ -154,13 +167,18 @@ resource "aws_lambda_permission" "apigw_ba" {
 resource "aws_api_gateway_deployment" "api" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   description = "Deployed endpoint at ${timestamp()}"
+  
   depends_on  = [aws_api_gateway_integration_response.endpoint]
+  
 }
 
 resource "aws_api_gateway_stage" "api" {
   stage_name    = "prod"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   deployment_id = aws_api_gateway_deployment.api.id
+    tags = {
+    goat = "true"
+  }
 }
 
 
@@ -176,6 +194,9 @@ resource "aws_api_gateway_rest_api" "apiLambda_ba" {
     types = [
       "REGIONAL"
     ]
+  }
+    tags = {
+    goat = "true"
   }
 }
 
@@ -252,6 +273,7 @@ resource "aws_api_gateway_integration" "lambda_xss_root_post" {
       }
     )
   }
+  
 }
 
 resource "aws_api_gateway_integration_response" "lambda_xss_root_post_integration_response" {
@@ -317,12 +339,14 @@ resource "aws_api_gateway_resource" "ban_user_root" {
   rest_api_id = aws_api_gateway_rest_api.apiLambda_ba.id
   parent_id   = aws_api_gateway_rest_api.apiLambda_ba.root_resource_id
   path_part   = "ban-user"
+  
 }
 resource "aws_api_gateway_method" "proxy_ban_user_root_post" {
   rest_api_id   = aws_api_gateway_rest_api.apiLambda_ba.id
   resource_id   = aws_api_gateway_resource.ban_user_root.id
   http_method   = "POST"
   authorization = "NONE"
+  
 
 }
 resource "aws_api_gateway_method_response" "proxy_ban_user_root_post_response_200" {
@@ -330,6 +354,7 @@ resource "aws_api_gateway_method_response" "proxy_ban_user_root_post_response_20
   resource_id = aws_api_gateway_resource.ban_user_root.id
   http_method = aws_api_gateway_method.proxy_ban_user_root_post.http_method
   status_code = 200
+  
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers"     = true,
@@ -733,6 +758,7 @@ resource "aws_api_gateway_resource" "list_posts_root" {
   rest_api_id = aws_api_gateway_rest_api.apiLambda_ba.id
   parent_id   = aws_api_gateway_rest_api.apiLambda_ba.root_resource_id
   path_part   = "list-posts"
+  
 }
 
 
@@ -2929,6 +2955,7 @@ resource "aws_api_gateway_integration_response" "lambda_change_profile_root_opti
 /* Deploying the API with stage name i.e data */
 
 resource "aws_api_gateway_deployment" "apideploy_ba" {
+  
   depends_on = [
     aws_api_gateway_integration_response.save_content_root_options_integration_response,
     aws_api_gateway_integration_response.search_author_root_options_integration_response,
@@ -3061,6 +3088,7 @@ resource "aws_api_gateway_deployment" "apideploy_ba" {
   variables = {
     "BLOG_KEY" = "655877f0f8ade541e1d21a48fe396ddb"
   }
+  
 }
 
 /* Lambda Setup - blog-application-data*/
@@ -3072,12 +3100,14 @@ data "archive_file" "lambda_zip_bap" {
   depends_on = [
     null_resource.file_replacement_lambda_data
   ]
+  
 }
 resource "aws_lambda_layer_version" "lambda_layer" {
   filename                 = "resources/lambda/layer/bcrypt-pyjwt.zip"
   layer_name               = "bcrypt-pyjwt"
   compatible_architectures = ["x86_64"]
   compatible_runtimes      = ["python3.9"]
+  
 }
 
 resource "aws_lambda_function" "lambda_ba_data" {
@@ -3088,6 +3118,9 @@ resource "aws_lambda_function" "lambda_ba_data" {
   role          = aws_iam_role.blog_app_lambda_python.arn
   depends_on    = [data.archive_file.lambda_zip_bap]
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
+    tags = {
+    goat = "true"
+  }
   memory_size   = "256"
   environment {
     variables = {
@@ -3117,6 +3150,9 @@ resource "aws_iam_role" "blog_app_lambda_python" {
   ]
 }
 EOF
+  tags = {
+    goat = "true"
+  }
 }
 
 
@@ -3156,6 +3192,9 @@ resource "aws_iam_policy" "lambda_data_policies" {
     ],
     "Version" : "2012-10-17"
   })
+    tags = {
+    goat = "true"
+  }
 }
 
 
@@ -3165,6 +3204,7 @@ resource "aws_lambda_permission" "apigw_ba_python" {
   function_name = aws_lambda_function.lambda_ba_data.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.apiLambda_ba.execution_arn}/*/*"
+  
 }
 
 
@@ -3197,7 +3237,9 @@ resource "aws_s3_bucket" "bucket_upload" {
   tags = {
     Name        = "Production bucket"
     Environment = "Prod"
+    goat = "true"
   }
+  
 }
 
 # ACL fixes required for AWS S3 APR 2023 updates.
@@ -3208,6 +3250,7 @@ resource "aws_s3_bucket_public_access_block" "bucket_upload" {
   block_public_policy     = false
   ignore_public_acls      = false
   restrict_public_buckets = false
+  
 }
 
 resource "aws_s3_bucket_ownership_controls" "bucket_upload" {
@@ -3225,6 +3268,7 @@ resource "aws_s3_bucket_acl" "bucket_upload" {
 
   bucket = aws_s3_bucket.bucket_upload.id
   acl    = "private"
+  
 }
 
 resource "aws_s3_bucket_policy" "allow_access_for_prod" {
@@ -3245,6 +3289,7 @@ data "aws_iam_policy_document" "allow_get_access" {
       "${aws_s3_bucket.bucket_upload.arn}/*",
     ]
   }
+  
 }
 resource "aws_s3_bucket_cors_configuration" "bucket_upload" {
   bucket = aws_s3_bucket.bucket_upload.bucket
@@ -3273,6 +3318,9 @@ resource "aws_s3_object" "upload_folder_prod" {
   source       = "./resources/s3/webfiles/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_api_gw, aws_s3_bucket_acl.bucket_upload]
+  tags = {
+    goat = "true"
+  }
 }
 
 
@@ -3283,7 +3331,9 @@ resource "aws_s3_bucket" "dev" {
   tags = {
     Name        = "Development bucket"
     Environment = "Dev"
+    goat = "true"
   }
+  
 }
 
 
@@ -3332,6 +3382,7 @@ data "aws_iam_policy_document" "allow_get_list_access" {
       "${aws_s3_bucket.dev.arn}/*",
     ]
   }
+  
 }
 # Upload in dev bucket
 
@@ -3343,7 +3394,11 @@ resource "aws_s3_object" "upload_folder_dev" {
   source       = "./resources/s3/webfiles/build/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.dev, null_resource.file_replacement_ec2_ip, aws_s3_bucket_acl.dev]
-}
+
+  tags = {
+    goat = "true"
+  }
+  }
 
 resource "aws_s3_object" "upload_folder_dev_2" {
   for_each     = fileset("./resources/s3/shared/", "**")
@@ -3353,7 +3408,10 @@ resource "aws_s3_object" "upload_folder_dev_2" {
   source       = "./resources/s3/shared/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.dev, null_resource.file_replacement_ec2_ip, aws_s3_bucket_acl.dev]
-}
+  tags = {
+    goat = "true"
+  }
+  }
 
 
 /* Creating a S3 Bucket for ec2-files upload. */
@@ -3364,6 +3422,7 @@ resource "aws_s3_bucket" "bucket_temp" {
   tags = {
     Name        = "Temporary bucket"
     Environment = "Dev"
+    goat = "true"
   }
 }
 
@@ -3404,7 +3463,10 @@ resource "aws_s3_object" "upload_temp_object" {
   source       = "./resources/s3/webfiles/build/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_lambda_react, aws_s3_bucket_acl.bucket_temp]
-}
+  tags = {
+    goat = "true"
+  }
+  }
 
 resource "aws_s3_object" "upload_temp_object_2" {
   for_each     = fileset("./resources/s3/shared/", "**")
@@ -3414,7 +3476,10 @@ resource "aws_s3_object" "upload_temp_object_2" {
   source       = "./resources/s3/shared/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_lambda_react, aws_s3_bucket_acl.bucket_temp]
-}
+  tags = {
+    goat = "true"
+  }
+  }
 /* Creating a S3 Bucket for Terraform state file upload. */
 resource "aws_s3_bucket" "bucket_tf_files" {
   bucket        = "do-not-delete-awsgoat-state-files-${data.aws_caller_identity.current.account_id}"
@@ -3422,6 +3487,7 @@ resource "aws_s3_bucket" "bucket_tf_files" {
   tags = {
     Name        = "Do not delete Bucket"
     Environment = "Dev"
+    goat = "true"
   }
 }
 
@@ -3434,21 +3500,24 @@ resource "aws_vpc" "goat_vpc" {
   enable_dns_hostnames = true
   tags = {
     Name = "AWS_GOAT_VPC"
+    goat = "true"
   }
 }
 resource "aws_internet_gateway" "goat_gw" {
   vpc_id = aws_vpc.goat_vpc.id
   tags = {
     Name = "app gateway"
+    goat = "true"
   }
 }
 resource "aws_subnet" "goat_subnet" {
   vpc_id                  = aws_vpc.goat_vpc.id
   cidr_block              = "192.168.0.0/24"
-  availability_zone       = "eu-west-3a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "AWS_GOAT App subnet"
+    goat = "true"
   }
 }
 
@@ -3458,10 +3527,14 @@ resource "aws_route_table" "goat_rt" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.goat_gw.id
   }
+    tags = {
+    goat = "true"
+  }
 }
 resource "aws_route_table_association" "goat_public_rta" {
   subnet_id      = aws_subnet.goat_subnet.id
   route_table_id = aws_route_table.goat_rt.id
+  
 }
 
 resource "aws_security_group" "goat_sg" {
@@ -3483,6 +3556,7 @@ resource "aws_security_group" "goat_sg" {
 
   tags = {
     Name = "AWS_GOAT_sg"
+    goat = "true"
   }
 }
 
@@ -3491,6 +3565,9 @@ resource "aws_security_group" "goat_sg" {
 resource "aws_iam_instance_profile" "goat_iam_profile" {
   name = "AWS_GOAT_ec2_profile"
   role = aws_iam_role.goat_role.name
+    tags = {
+    goat = "true"
+  }
 }
 resource "aws_iam_role" "goat_role" {
   name               = "AWS_GOAT_ROLE"
@@ -3510,6 +3587,9 @@ resource "aws_iam_role" "goat_role" {
     ]
 }
 EOF
+  tags = {
+    goat = "true"
+  }
 }
 resource "aws_iam_role_policy_attachment" "goat_s3_policy" {
   role       = aws_iam_role.goat_role.name
@@ -3572,6 +3652,9 @@ resource "aws_iam_policy" "goat_inline_policy_2" {
     ],
     "Version" : "2012-10-17"
   })
+    tags = {
+    goat = "true"
+  }
 }
 
 data "template_file" "goat_script" {
@@ -3580,6 +3663,7 @@ data "template_file" "goat_script" {
     S3_BUCKET_NAME = aws_s3_bucket.bucket_temp.bucket
   }
   depends_on = [aws_s3_bucket.bucket_temp]
+  
 }
 
 
@@ -3594,6 +3678,9 @@ data "aws_ami" "goat_ami" {
     values = ["hvm"]
   }
   owners = ["amazon"]
+    tags = {
+    goat = "true"
+  }
 }
 
 resource "aws_instance" "goat_instance" {
@@ -3604,11 +3691,13 @@ resource "aws_instance" "goat_instance" {
   security_groups      = [aws_security_group.goat_sg.id]
   tags = {
     Name = "AWS_GOAT_DEV_INSTANCE"
+    goat = "true"
   }
   user_data = data.template_file.goat_script.rendered
   depends_on = [
     aws_s3_object.upload_temp_object_2
   ]
+  
 }
 
 
@@ -3623,6 +3712,9 @@ resource "aws_dynamodb_table" "users_table" {
     name = "email"
     type = "S"
   }
+    tags = {
+    goat = "true"
+  }
 }
 resource "aws_dynamodb_table" "posts_table" {
   name           = "blog-posts"
@@ -3634,6 +3726,9 @@ resource "aws_dynamodb_table" "posts_table" {
   attribute {
     name = "id"
     type = "S"
+  }
+    tags = {
+    goat = "true"
   }
 }
 
